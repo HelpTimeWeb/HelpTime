@@ -1,1 +1,1 @@
-web: gunicorn helptime.helptime.wsgi
+web: gunicorn --chdir helptime helptime.wsgi
