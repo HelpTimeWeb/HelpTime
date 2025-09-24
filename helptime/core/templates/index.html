@@ -10,10 +10,10 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
   <div class="container">
-    <a class="navbar-brand text-success fw-bold" href="#">HelpTime</a>
+    <a class="navbar-brand text-success fw-bold" href="{% url 'home' %}">HelpTime</a>
     <div>
-      <a href="login.html" class="btn btn-outline-success me-2">Iniciar Sesión</a>
-      <a href="registro.html" class="btn btn-success">Registrarse</a>
+      <a href="{% url 'login' %}" class="btn btn-outline-success me-2">Iniciar Sesión</a>
+      <a href="{% url 'register' %}" class="btn btn-success">Registrarse</a>
     </div>
   </div>
 </nav>
@@ -22,8 +22,8 @@
   <h1 class="mb-3 text-success">¡Bienvenido a HelpTime!</h1>
   <p class="mb-4">Ofrece o solicita ayuda en tu comunidad y gana reputación ayudando a otros.</p>
   <div class="d-flex justify-content-center gap-3">
-    <a href="ofrecer.html" class="btn btn-success btn-lg">Ofrecer un servicio</a>
-    <a href="tomar.html" class="btn btn-outline-success btn-lg">Tomar un servicio</a>
+    <a href="{% url 'create_service' %}" class="btn btn-success btn-lg">Ofrecer un servicio</a>
+    <a href="{% url 'services' %}" class="btn btn-outline-success btn-lg">Tomar un servicio</a>
   </div>
 </div>
 
