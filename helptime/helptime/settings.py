@@ -50,7 +50,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'helptime.urls'
+ROOT_URLCONF = 'helptime.helptime.urls'
+
 
 TEMPLATES = [
     {
