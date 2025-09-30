@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HelpTime - Perfil de Usuario</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand text-success" href="{% url 'home' %}">HelpTime</a>
+            <div class="d-flex">
+                <a href="{% url 'services' %}" class="btn btn-outline-success me-2">Ver Servicios</a>
+                <a href="{% url 'login' %}" class="btn btn-success">Cerrar Sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row">
+            <!-- info del usuario -->
+            <div class="col-md-4">
+                <div class="card shadow p-3">
+                    <img src="https://via.placeholder.com/150" class="card-img-top rounded-circle mb-3" alt="Foto de usuario">
+                    <h4 class="card-title">Nombre Usuario</h4>
+                    <p class="card-text">Edad: 28</p>
+                    <p class="card-text">Profesión: Carpintero</p>
+                    <p class="card-text">Ubicación: Palermo</p>
+                    <p class="card-text">Reputación: ★★★★☆</p>
+                    <a href="{% url 'chat' %}" class="btn btn-success w-100 mt-2">Iniciar Chat</a>
+                </div>
+            </div>
+
+            <!-- servicios ofrecidos y experiencia -->
+            <div class="col-md-8">
+                <div class="card shadow p-3">
+                    <h5 class="mb-3">Servicios / Experiencia</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Clases de Guitarra - 20 horas completadas</li>
+                        <li class="list-group-item">Reparación de Muebles - 15 horas completadas</li>
+                        <li class="list-group-item">Clases de Carpintería - 10 horas completadas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

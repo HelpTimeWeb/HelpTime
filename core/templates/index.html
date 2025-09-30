@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>HelpTime - Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+  <div class="container">
+    <a class="navbar-brand text-success fw-bold" href="{% url 'home' %}">HelpTime</a>
+    <div>
+      <a href="{% url 'login' %}" class="btn btn-outline-success me-2">Iniciar Sesión</a>
+      <a href="{% url 'register' %}" class="btn btn-success">Registrarse</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container text-center my-5">
+  <h1 class="mb-3 text-success">¡Bienvenido a HelpTime!</h1>
+  <p class="mb-4">Ofrece o solicita ayuda en tu comunidad y gana reputación ayudando a otros.</p>
+  <div class="d-flex justify-content-center gap-3">
+    <a href="{% url 'create_service' %}" class="btn btn-success btn-lg">Ofrecer un servicio</a>
+    <a href="{% url 'services' %}" class="btn btn-outline-success btn-lg">Tomar un servicio</a>
+  </div>
+</div>
+
+</body>
+</html>
