@@ -1,5 +1,8 @@
 .card-img-top {
-    width: 100%;           /* ocupa todo el ancho de la tarjeta */
-    height: 100px;         /* altura fija más pequeña */
-    object-fit: cover;     /* mantiene proporción y recorta lo que sobra */
+    width: 100%;        /* ancho de la tarjeta */
+    height: auto;       /* altura se ajusta automáticamente */
+    max-height: 150px;  /* altura máxima deseada */
+    object-fit: contain; /* mantiene proporción sin recortar */
+    display: block;
+    margin: auto;
 }
