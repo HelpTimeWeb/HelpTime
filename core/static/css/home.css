@@ -1,15 +1,5 @@
 .card-img-top {
-    width: 100%;       /* que ocupe todo el ancho de la tarjeta */
-    height: 200px;     /* altura fija (ajusta a tu preferencia) */
-    object-fit: cover; /* mantiene proporción y recorta lo que sobra */
-}
-
-.card {
-    height: 350px; /* ajusta según tu diseño */
-}
-
-.card-img-top {
-    width: 100%;
-    aspect-ratio: 4 / 3;  /* fuerza proporción 4:3 */
-    object-fit: cover;
+    width: 100%;           /* ocupa todo el ancho de la tarjeta */
+    height: 100px;         /* altura fija más pequeña */
+    object-fit: cover;     /* mantiene proporción y recorta lo que sobra */
 }
