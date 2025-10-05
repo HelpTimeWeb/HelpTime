@@ -52,25 +52,26 @@
         <div class="row">
             {% for service in services %}
             <div class="col-md-4 mb-3">
-                <div class="card">
-                    {% if service.category == 'educacion' %}
-                    <img src="{% static 'img/categorias/educacion.png' %}" class="card-img-top" alt="Educación">
-                    {% elif service.category == 'hogar' %}
-                    <img src="{% static 'img/categorias/hogar.png' %}" class="card-img-top" alt="Hogar">
-                    {% elif service.category == 'tecnologia' %}
-                    <img src="{% static 'img/categorias/tecnologia.png' %}" class="card-img-top" alt="Tecnología">
-                    {% elif service.category == 'salud' %}
-                    <img src="{% static 'img/categorias/salud.png' %}" class="card-img-top" alt="Salud">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ service.title }}</h5>
-                        <p class="card-text">Profesión: {{ service.profession }}</p>
-                        <p class="card-text">Reputación: {{ service.rating }}</p>
-                        <p class="card-text">Ubicación: {{ service.location }}</p>
-                        <a href="{% url 'profile' service.user_id %}" class="btn btn-success w-100">Ver Perfil</a>
-                    </div>
+            <div class="card servicio-card h-100">
+                {% if service.category == 'educacion' %}
+                <img src="{% static 'img/categorias/educacion.png' %}" class="card-img-top" alt="Educación">
+                {% elif service.category == 'hogar' %}
+                <img src="{% static 'img/categorias/hogar.png' %}" class="card-img-top" alt="Hogar">
+                {% elif service.category == 'tecnologia' %}
+                <img src="{% static 'img/categorias/tecnologia.png' %}" class="card-img-top" alt="Tecnología">
+                {% elif service.category == 'salud' %}
+                <img src="{% static 'img/categorias/salud.png' %}" class="card-img-top" alt="Salud">
+                {% endif %}
+                <div class="card-body">
+                    <h6 class="card-title">{{ service.title }}</h6>
+                    <p class="card-text">Profesión: {{ service.profession }}</p>
+                    <p class="card-text">Reputación: {{ service.rating }}</p>
+                    <p class="card-text">Ubicación: {{ service.location }}</p>
+                    <a href="{% url 'profile' service.user_id %}" class="btn btn-success w-100">Ver Perfil</a>
                 </div>
             </div>
+            </div>
+
             {% empty %}
             <p class="text-muted">No se encontraron servicios con esos filtros.</p>
             {% endfor %}

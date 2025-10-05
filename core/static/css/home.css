@@ -1,8 +1,43 @@
-.card-img-top {
-    width: 100%;        /* ancho de la tarjeta */
-    height: auto;       /* altura se ajusta automáticamente */
-    max-height: 150px;  /* altura máxima deseada */
-    object-fit: contain; /* mantiene proporción sin recortar */
+/* Cards compactas y centradas */
+.card.servicio-card {
+    max-width: 300px;     /* ancho máximo en desktop */
+    margin: 0 auto 1rem;  /* centrado y separación abajo */
+}
+
+/* Imagen de la card responsive y sin distorsión */
+.card.servicio-card img {
+    width: 100%;          /* ocupa todo el ancho */
+    height: auto;         /* respeta proporción original */
+    max-height: 150px;    /* altura máxima */
+    object-fit: contain;  /* mantiene proporción sin recortar */
     display: block;
-    margin: auto;
+    margin: 0 auto;
+}
+
+/* Card body con padding más pequeño */
+.card.servicio-card .card-body {
+    padding: 0.5rem;
+}
+
+/* Títulos y texto más compactos */
+.card.servicio-card .card-title {
+    font-size: 1rem;
+}
+
+.card.servicio-card .card-text {
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+/* Botón más pequeño */
+.card.servicio-card .btn {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Responsive: en pantallas pequeñas ajustar columnas */
+@media (max-width: 767px) {
+    .card.servicio-card {
+        max-width: 100%;
+    }
 }
