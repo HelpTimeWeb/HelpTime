@@ -23,9 +23,13 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('login/', views.login, name='login'),
     path('register/', views.register, name='register'),
-    path('profile/', views.profile, name='profile'),
-    path('chat/', views.chat, name='chat'),
+    path('profile/<int:user_id>/', views.profile_view, name='profile'),
+    path('chat/', views.chat, name='chat'),  # sin ID
+    path('chat/<int:chat_user_id>/', views.chat, name='chat_with_user'),  # con ID
+    path('chat/send/<int:user_id>/', views.send_message, name='send_message'),
     path('create_service/', views.create_service, name='create_service'),
     path('services/', views.services, name='services'),
+    path('terms/', views.terms, name='terms'),
+    path('logout/', views.logout_view, name='logout'), 
 ]
 
