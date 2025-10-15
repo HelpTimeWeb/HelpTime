@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>HelpTime - Inicio</title>
+  <link rel="icon" href="{% static 'img/favicon.ico' %}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body class="bg-light">
+
+<!-- 🟢 Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+  <div class="container">
+    <a class="navbar-brand text-success d-flex align-items-center" href="{% url 'home' %}">
+      <img src="{% static 'img/logo.png' %}" alt="Logo" width="30" height="30" class="me-2">
+      <strong>HelpTime</strong>
+    </a>
+
+    {% if user.is_authenticated %}
+      <div class="d-flex align-items-center">
+        <a href="{% url 'profile' user.id %}" class="me-3 text-decoration-none text-dark d-flex align-items-center">
+          <img src="{{ user.profile_image_url }}" class="rounded-circle me-2" alt="Foto de usuario" width="40" height="40">
+          {{ user.username }}
+        </a>
+        <a href="{% url 'logout' %}" class="btn btn-outline-danger">Cerrar sesión</a>
+      </div>
+    {% else %}
+      <div>
+        <a href="{% url 'login' %}" class="btn btn-outline-success me-2">Iniciar sesión</a>
+        <a href="{% url 'register' %}" class="btn btn-success">Registrarse</a>
+      </div>
+    {% endif %}
+  </div>
+</nav>
+
+<!-- 🟢 Contenido principal -->
+<div class="container text-center my-5">
+  <h1 class="mb-3 text-success">¡Bienvenido a HelpTime!</h1>
+  <p class="mb-4">Ofrecé o solicitá ayuda en tu comunidad y ganá reputación ayudando a otros.</p>
+
+  <div class="d-flex justify-content-center gap-3">
+    {% if user.is_authenticated %}
+      <a href="{% url 'create_service' %}" class="btn btn-success btn-lg">
+        <i class="bi bi-plus-circle"></i> Ofrecer un servicio
+      </a>
+      <a href="{% url 'services' %}" class="btn btn-outline-success btn-lg">
+        <i class="bi bi-search"></i> Tomar un servicio
+      </a>
+    {% else %}
+      <a href="{% url 'login' %}" class="btn btn-success btn-lg">
+        Iniciar sesión para ofrecer un servicio
+      </a>
+      <a href="{% url 'services' %}" class="btn btn-outline-success btn-lg">
+        Ver servicios disponibles
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- 🟢 Footer -->
+<footer class="text-center mt-5 mb-3 text-muted">
+  <small>
+    HelpTime no se hace responsable de conflictos entre usuarios. 
+    Al usar este sitio aceptás nuestras 
+    <a href="#" class="text-decoration-none">condiciones de uso</a>.
+  </small>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

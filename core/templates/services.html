@@ -1,4 +1,5 @@
 {% load static %}
+{% load widget_tweaks %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,48 +11,49 @@
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
 </head>
 <body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-        <div class="container">
-            <a class="navbar-brand text-success d-flex align-items-center" href="{% url 'home' %}">
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand text-success d-flex align-items-center" href="{% url 'home' %}">
             <img src="{% static 'img/logo.png' %}" alt="Logo" width="30" height="30" class="me-2">
             HelpTime
         </a>
-            <div class="d-flex">
-                <a href="{% url 'create_service' %}" class="btn btn-outline-success me-2">Publicar Servicio</a>
-                <a href="{% url 'logout' %}" class="btn btn-success">Cerrar Sesión</a>
-            </div>
+        <div class="d-flex">
+            <a href="{% url 'create_service' %}" class="btn btn-outline-success me-2">Publicar Servicio</a>
+            <a href="{% url 'logout' %}" class="btn btn-success">Cerrar Sesión</a>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <div class="container mt-5">
-        <h3 class="mb-4">Servicios Disponibles</h3>
+<div class="container mt-5">
+    <h3 class="mb-4">Servicios Disponibles</h3>
 
-        <!-- Filtro y búsqueda usando formulario GET -->
-        <form method="get" class="row mb-4">
-            <div class="col-md-4">
-                <input type="text" class="form-control" placeholder="Buscar por palabra clave" name="search" value="{{ request.GET.search }}">
-            </div>
-            <div class="col-md-3">
-                <select class="form-select" name="category">
-                    <option value="" {% if request.GET.category == "" %}selected{% endif %}>Todas las categorías</option>
-                    <option value="educacion" {% if request.GET.category == "educacion" %}selected{% endif %}>Educación</option>
-                    <option value="hogar" {% if request.GET.category == "hogar" %}selected{% endif %}>Hogar</option>
-                    <option value="tecnologia" {% if request.GET.category == "tecnologia" %}selected{% endif %}>Tecnología</option>
-                    <option value="salud" {% if request.GET.category == "salud" %}selected{% endif %}>Salud</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <input type="text" class="form-control" placeholder="Ubicación" name="location" value="{{ request.GET.location }}">
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-success w-100" type="submit">Filtrar</button>
-            </div>
-        </form>
+    <!-- Filtro y búsqueda -->
+    <form method="get" class="row mb-4">
+        <div class="col-md-4">
+            <input type="text" class="form-control" placeholder="Buscar por palabra clave" name="search" value="{{ request.GET.search }}">
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" name="category">
+                <option value="" {% if request.GET.category == "" %}selected{% endif %}>Todas las categorías</option>
+                <option value="educacion" {% if request.GET.category == "educacion" %}selected{% endif %}>Educación</option>
+                <option value="hogar" {% if request.GET.category == "hogar" %}selected{% endif %}>Hogar</option>
+                <option value="tecnologia" {% if request.GET.category == "tecnologia" %}selected{% endif %}>Tecnología</option>
+                <option value="salud" {% if request.GET.category == "salud" %}selected{% endif %}>Salud</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <input type="text" class="form-control" placeholder="Ubicación" name="location" value="{{ request.GET.location }}">
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-success w-100" type="submit">Filtrar</button>
+        </div>
+    </form>
 
-        <!-- Cards de servicios -->
-        <div class="row">
-            {% for service in services %}
-            <div class="col-md-4 mb-3">
+    <!-- Cards de servicios -->
+    <div class="row">
+        {% for service in services %}
+        <div class="col-md-4 mb-3">
             <div class="card servicio-card h-100">
                 {% if service.category == 'educacion' %}
                 <img src="{% static 'img/categorias/educacion.png' %}" class="card-img-top" alt="Educación">
@@ -67,15 +69,13 @@
                     <p class="card-text">Profesión: {{ service.profession }}</p>
                     <p class="card-text">Reputación: {{ service.rating }}</p>
                     <p class="card-text">Ubicación: {{ service.location }}</p>
-                    <a href="{% url 'profile' service.user_id %}" class="btn btn-success w-100">Ver Perfil</a>
+                    <a href="{% url 'profile' service.user.id %}" class="btn btn-success w-100">Ver Perfil</a>
                 </div>
             </div>
-            </div>
-
-            {% empty %}
-            <p class="text-muted">No se encontraron servicios con esos filtros.</p>
-            {% endfor %}
         </div>
+        {% empty %}
+        <p class="text-muted">No se encontraron servicios con esos filtros.</p>
+        {% endfor %}
     </div>
 
     <!-- Paginación -->
@@ -108,6 +108,8 @@
             </ul>
         </nav>
     </div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

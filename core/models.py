@@ -1,48 +1,100 @@
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
-from django.contrib.auth.models import User
+import os
 
-# -------------------------------
-# SERVICIOS
-# -------------------------------
-class Service(models.Model):
-    title = models.CharField(max_length=100)       # antes "name"
-    description = models.TextField(blank=True)
-    location = models.CharField(max_length=100)
-    category = models.CharField(max_length=50)
-    image = models.ImageField(upload_to='services/', blank=True, null=True)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE)  # antes "owner"
+def profile_image_upload_path(instance, filename):
+    """
+    Guarda la imagen de perfil en media/profiles/<username>/<filename>
+    """
+    return os.path.join('profiles', instance.username, filename)
+
+class Usuario(AbstractUser):
+    # Campos adicionales
+    profession = models.CharField(max_length=100, blank=True, null=True)
+    location = models.CharField(max_length=100, blank=True, null=True)
+    age = models.PositiveIntegerField(blank=True, null=True)
+
+    # Imagen de perfil
+    profile_image = models.ImageField(
+        upload_to=profile_image_upload_path, 
+        blank=True, 
+        null=True
+    )
+
+    @property
+    def profile_image_url(self):
+        """
+        Devuelve la URL de la imagen de perfil si existe,
+        si no, devuelve la imagen por defecto en media.
+        """
+        if self.profile_image:
+            return self.profile_image.url
+        return '/media/profiles/default.png'  # Debes poner esta imagen en media/profiles/default.png
+
+    # Relaciones de permisos y grupos
+    groups = models.ManyToManyField(
+        Group,
+        related_name="usuario_set",
+        blank=True,
+        help_text="Grupos a los que pertenece el usuario.",
+        verbose_name="grupos"
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name="usuario_permissions_set",
+        blank=True,
+        help_text="Permisos específicos del usuario.",
+        verbose_name="permisos de usuario"
+    )
 
     def __str__(self):
-        return self.title
+        return self.username
 
-# -------------------------------
-# MENSAJES PARA CHAT
-# -------------------------------
-class Message(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
-    content = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.sender.username} → {self.receiver.username}: {self.content[:20]}"
-
-# -------------------------------
-# MODELOS DE PRUEBA (opcionales)
-# -------------------------------
-class UsuarioPrueba(models.Model):
-    nombre = models.CharField(max_length=100)
-    email = models.EmailField()
-    creado_en = models.DateTimeField(auto_now_add=True)
+# -------------------------------------------------------
+# Roles opcionales
+# -------------------------------------------------------
+class Rol(models.Model):
+    nombre = models.CharField(max_length=50)
 
     def __str__(self):
         return self.nombre
 
-class PublicacionPrueba(models.Model):
-    usuario = models.ForeignKey(UsuarioPrueba, on_delete=models.CASCADE)
-    titulo = models.CharField(max_length=200)
-    contenido = models.TextField()
-    fecha = models.DateTimeField(auto_now_add=True)
+
+# -------------------------------------------------------
+# Servicio publicado por un usuario
+# -------------------------------------------------------
+class Servicio(models.Model):
+    CATEGORY_CHOICES = (
+        ('educacion', 'Educación'),
+        ('hogar', 'Hogar'),
+        ('tecnologia', 'Tecnología'),
+        ('salud', 'Salud'),
+    )
+
+    user = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='services')
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    profession = models.CharField(max_length=100)
+    location = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='services/', blank=True, null=True)
+    rating = models.FloatField(default=0)
 
     def __str__(self):
-        return self.titulo
+        return f"{self.title} - {self.user.username}"
+
+
+# -------------------------------------------------------
+# Mensajes de chat entre usuarios
+# -------------------------------------------------------
+class Mensaje(models.Model):
+    sender = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='enviados')
+    receiver = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='recibidos')
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['timestamp']
+
+    def __str__(self):
+        return f"{self.sender} -> {self.receiver}: {self.content[:20]}"

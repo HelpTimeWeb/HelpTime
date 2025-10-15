@@ -17,19 +17,33 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from core import views
-
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
+    path('admin/', admin.site.urls),  # Panel de administración
+
+    # Páginas principales
     path('', views.home, name='home'),
-    path('login/', views.login, name='login'),
-    path('register/', views.register, name='register'),
+    path('terms/', views.terms_view, name='terms'),
+
+    # Autenticación
+    path('register/', views.register_view, name='register'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+
+    # Perfil de usuario
     path('profile/<int:user_id>/', views.profile_view, name='profile'),
-    path('chat/', views.chat, name='chat'),  # sin ID
-    path('chat/<int:chat_user_id>/', views.chat, name='chat_with_user'),  # con ID
-    path('chat/send/<int:user_id>/', views.send_message, name='send_message'),
-    path('create_service/', views.create_service, name='create_service'),
-    path('services/', views.services, name='services'),
-    path('terms/', views.terms, name='terms'),
-    path('logout/', views.logout_view, name='logout'), 
+
+    # Servicios
+    path('services/', views.services_view, name='services'),
+    path('create_service/', views.create_service_view, name='create_service'),
+
+    # Chat
+    path('chat/<int:user_id>/', views.chat_view, name='chat'),
+    path('chat/<int:user_id>/send/', views.send_message, name='send_message'),
 ]
 
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

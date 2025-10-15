@@ -1,105 +1,120 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from .models import Usuario, Servicio, Mensaje, Rol
+from .forms import RegistroForm, LoginForm, ServicioForm, MensajeForm
 from django.core.paginator import Paginator
-import random
+from django.contrib import messages
 
-# core/views.py
-def services(request):
-    users = {
-        1: "Instructor de Yoga",
-        2: "Profesor de Matemática",
-        3: "Técnico en Computadoras",
-        4: "Electricista",
-        5: "Nutricionista",
-    }
+# Home
+def home(request):
+    return render(request, 'home.html')
 
-    predefined_services = [
-        {"title": "Clases de Yoga", "category": "salud", "location": "Palermo", "user_id": 1, "rating": 4.8, "profession": users[1]},
-        {"title": "Clases de Matemática", "category": "educacion", "location": "Recoleta", "user_id": 2, "rating": 4.7, "profession": users[2]},
-        {"title": "Reparación de Laptops", "category": "tecnologia", "location": "Caballito", "user_id": 3, "rating": 4.9, "profession": users[3]},
-        {"title": "Electricista a Domicilio", "category": "hogar", "location": "Belgrano", "user_id": 4, "rating": 4.6, "profession": users[4]},
-        {"title": "Asesoramiento Nutricional", "category": "salud", "location": "Palermo", "user_id": 5, "rating": 4.9, "profession": users[5]},
-    ]
+# Registro
+def register_view(request):
+    if request.method == 'POST':
+        form = RegistroForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password1'])
+            user.save()
+            if form.cleaned_data.get('roles'):
+                user.roles.set(form.cleaned_data['roles'])
+            login(request, user)
+            return redirect('home')
+    else:
+        form = RegistroForm()
+    return render(request, 'register.html', {'form': form})
 
-    # Si generás servicios extra aleatorios
-    import random
-    extra_services = []
-    categories = ["educacion", "hogar", "tecnologia", "salud"]
-    locations = ["Palermo", "Recoleta", "Caballito", "Belgrano"]
+# Login
+def login_view(request):
+    if request.method == 'POST':
+        form = LoginForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('home')
+        return render(request, 'login.html', {'form': form, 'error': 'Usuario o contraseña incorrecta'})
+    else:
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form})
 
-    for i in range(5):
-        user_id = random.choice(list(users.keys()))
-        extra_services.append({
-            "title": f"Servicio Extra {i+1}",
-            "category": random.choice(categories),
-            "location": random.choice(locations),
-            "user_id": user_id,
-            "rating": round(random.uniform(3.5, 5.0), 1),
-            "profession": users[user_id]  # <-- agrego profesión
-        })
+# Logout
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('home')
 
-    all_services = predefined_services + extra_services
+# Perfil de usuario
+@login_required
+def profile_view(request, user_id):
+    user = get_object_or_404(Usuario, id=user_id)
+    return render(request, 'profile.html', {'user': user})
 
-    # Paginación
-    from django.core.paginator import Paginator
-    paginator = Paginator(all_services, 6)
+# Lista de servicios con filtros y paginación
+@login_required
+def services_view(request):
+    servicios = Servicio.objects.all()
+    search = request.GET.get('search')
+    category = request.GET.get('category')
+    location = request.GET.get('location')
+
+    if search:
+        servicios = servicios.filter(title__icontains=search)
+    if category:
+        servicios = servicios.filter(category=category)
+    if location:
+        servicios = servicios.filter(location__icontains=location)
+
+    paginator = Paginator(servicios, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     return render(request, 'services.html', {'services': page_obj, 'page_obj': page_obj})
 
-# -------------------------------
-# HOME, LOGIN, REGISTER
-# -------------------------------
-def home(request):
-    return render(request, 'index.html')
+# Crear servicio
+@login_required
+def create_service_view(request):
+    if request.method == 'POST':
+        form = ServicioForm(request.POST, request.FILES)
+        if form.is_valid():
+            servicio = form.save(commit=False)
+            servicio.user = request.user
+            servicio.save()
+            messages.success(request, "Servicio publicado correctamente ✅")
+            return redirect('create_service')
+        else:
+            messages.error(request, "Error al publicar el servicio. Revisá los campos.")
+    else:
+        form = ServicioForm()
+    return render(request, 'create_service.html', {'form': form})
 
-def login(request):
-    return render(request, 'login.html')
+# Chat con otro usuario
+@login_required
+def chat_view(request, user_id):
+    chat_user = get_object_or_404(Usuario, id=user_id)
 
-def register(request):
-    return render(request, 'register.html')
+    if chat_user == request.user:
+        chat_user = None
+        mensajes = []
+    else:
+        mensajes = Mensaje.objects.filter(
+            sender__in=[request.user, chat_user],
+            receiver__in=[request.user, chat_user]
+        )
 
-def logout_view(request):
-    return redirect('home')
+    return render(request, 'chat.html', {'chat_user': chat_user, 'messages': mensajes})
 
-# -------------------------------
-# PROFILE
-# -------------------------------
-def profile_view(request, user_id):
-    # Usuarios con profesiones coherentes
-    fake_users = {
-        1: {"username": "Jorge", "age": 20, "profession": "Instructor de Yoga", "location": "Palermo"},
-        2: {"username": "Manuel", "age": 22, "profession": "Profesor de Matemática", "location": "Recoleta"},
-        3: {"username": "Pedro", "age": 25, "profession": "Técnico en Computadoras", "location": "Caballito"},
-        4: {"username": "Pablo", "age": 24, "profession": "Electricista", "location": "Belgrano"},
-        5: {"username": "Laura", "age": 30, "profession": "Nutricionista", "location": "Palermo"},
-    }
-    user = fake_users.get(user_id)
-    if not user:
-        return render(request, "404.html", status=404)
-    return render(request, "profile.html", {"user": user})
-
-# -------------------------------
-# CHAT
-# -------------------------------
-def chat(request, chat_user_id=None):
-    if chat_user_id is None:
-        return render(request, 'chat.html', {'message': 'Seleccioná un usuario para chatear'})
-    
-    messages = [
-        {"sender": "Jorge", "content": "Hola!"},
-        {"sender": "Tú", "content": "Hola, ¿cómo estás?"}
-    ]
-    chat_user = {"username": f"Usuario {chat_user_id}"}
-    return render(request, 'chat.html', {'chat_user': chat_user, 'messages': messages})
-
-def send_message(request, user_id):
-    return redirect('chat_with_user', chat_user_id=user_id)
-
-
-
-def create_service(request):
-    return render(request, 'create_service.html')
-
-def terms(request):
+# Términos y condiciones
+def terms_view(request):
     return render(request, 'terms.html')
+
+# Enviar mensaje
+@login_required
+def send_message(request, user_id):
+    if request.method == "POST":
+        content = request.POST.get("message", "")
+        recipient = get_object_or_404(Usuario, id=user_id)
+        if content:
+            Mensaje.objects.create(sender=request.user, receiver=recipient, content=content)
+    return redirect('chat', user_id=user_id)
