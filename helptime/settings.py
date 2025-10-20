@@ -3,6 +3,11 @@ from pathlib import Path
 import os
 import environ  # pip install django-environ
 
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://web-production-c9d93.up.railway.app',
+]
+
 # -------------------------------------------------------
 # Base
 # -------------------------------------------------------
