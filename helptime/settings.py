@@ -23,7 +23,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # -------------------------------------------------------
 SECRET_KEY = env('SECRET_KEY', default='clave-por-defecto-para-dev')
 DEBUG = env.bool('DEBUG', default=True)
-ALLOWED_HOSTS = ['helptime.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['helptime.onrender.com', 'web-production-c9d93.up.railway.app' 'localhost', '127.0.0.1']
 
 # -------------------------------------------------------
 # Aplicaciones
