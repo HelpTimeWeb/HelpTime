@@ -87,8 +87,9 @@ WSGI_APPLICATION = 'helptime.wsgi.application'
 # Base de datos
 # -------------------------------------------------------
 DATABASES = {
-    'default': env.db(default='postgres://postgres:Helptimecontra77@localhost:5432/postgres?sslmode=require')
+    'default': env.db('DATABASE_URL')
 }
+
 
 # -------------------------------------------------------
 # Password validators
