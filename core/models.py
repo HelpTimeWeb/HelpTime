@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 from django.conf import settings
 import os
+from cloudinary_storage.storage import MediaCloudinaryStorage
+
 
 def profile_image_upload_path(instance, filename):
     """Guarda la imagen de perfil en Cloudinary o media/profiles/<username>/<filename>"""
@@ -13,11 +15,13 @@ class Usuario(AbstractUser):
     age = models.PositiveIntegerField(blank=True, null=True)
 
     profile_image = models.ImageField(
-        upload_to=profile_image_upload_path,
-        blank=True,
-        null=True,
-        default='profiles/default.png'  # ⚡ Default compatible con Cloudinary
-    )
+    storage=MediaCloudinaryStorage(),  # 👈 esto fuerza Cloudinary
+    upload_to=profile_image_upload_path,
+    blank=True,
+    null=True,
+    default='profiles/default.png'
+)
+
 
     @property
     def profile_image_url(self):
@@ -72,13 +76,18 @@ class Servicio(models.Model):
         ('salud', 'Salud'),
     )
 
+    image = models.ImageField(
+    storage=MediaCloudinaryStorage(),
+    upload_to='services/',
+    blank=True,
+    null=True
+)
     user = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='services')
     title = models.CharField(max_length=100)
     description = models.TextField()
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
     profession = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='services/', blank=True, null=True)
     rating = models.FloatField(default=0)
 
     def __str__(self):
