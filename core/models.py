@@ -3,20 +3,10 @@ from django.db import models
 from django.conf import settings
 import os
 
-
-# -------------------------------------------------------
-# Ruta donde se guardan las imágenes de perfil
-# -------------------------------------------------------
 def profile_image_upload_path(instance, filename):
-    """
-    Guarda la imagen de perfil en media/profiles/<username>/<filename>
-    """
+    """Guarda la imagen de perfil en Cloudinary o media/profiles/<username>/<filename>"""
     return os.path.join('profiles', instance.username, filename)
 
-
-# -------------------------------------------------------
-# Modelo de usuario personalizado
-# -------------------------------------------------------
 class Usuario(AbstractUser):
     profession = models.CharField(max_length=100, blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
@@ -26,22 +16,21 @@ class Usuario(AbstractUser):
         upload_to=profile_image_upload_path,
         blank=True,
         null=True,
-        default='profiles/default.png'
+        default='profiles/default.png'  # ⚡ Default compatible con Cloudinary
     )
 
     @property
     def profile_image_url(self):
-        """
-        Devuelve la URL de la imagen de perfil si existe.
-        Si no, devuelve la imagen por defecto en /media/profiles/default.png.
-        Compatible con producción (Render, Cloudinary, etc.).
-        """
+        """Devuelve la URL de la imagen de perfil o default.png en Cloudinary/Media"""
         try:
             if self.profile_image and hasattr(self.profile_image, 'url'):
                 return self.profile_image.url
         except Exception:
             pass
-        return f"{settings.MEDIA_URL}profiles/default.png"
+        # Fallback
+        if settings.DEBUG:
+            return f"{settings.MEDIA_URL}profiles/default.png"
+        return "https://res.cloudinary.com/dcirbnch2/image/upload/v0000000000/profiles/default.png"
 
     groups = models.ManyToManyField(
         Group,
