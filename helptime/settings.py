@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'widget_tweaks',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 AUTH_USER_MODEL = 'core.Usuario'
@@ -76,6 +78,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -117,9 +120,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 # -------------------------------------------------------
 # Login
 # -------------------------------------------------------
@@ -130,3 +130,17 @@ LOGIN_REDIRECT_URL = '/'
 # Default primary key
 # -------------------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Cloudinary para producción (Render)
+if not DEBUG:
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': env('CLOUDINARY_CLOUD_NAME'),
+        'API_KEY': env('CLOUDINARY_API_KEY'),
+        'API_SECRET': env('CLOUDINARY_API_SECRET'),
+    }
+else:
+    # En local, seguir usando la carpeta media/
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    

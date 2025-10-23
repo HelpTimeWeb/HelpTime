@@ -17,11 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from core import views
-from django.conf.urls.static import static
 from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),  # Panel de administración
+    path('admin/', admin.site.urls),
 
     # Páginas principales
     path('', views.home, name='home'),
@@ -44,6 +44,6 @@ urlpatterns = [
     path('chat/<int:user_id>/send/', views.send_message, name='send_message'),
 ]
 
-
+# Servir media solo en local
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,37 +1,48 @@
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
+from django.conf import settings
 import os
 
+
+# -------------------------------------------------------
+# Ruta donde se guardan las imágenes de perfil
+# -------------------------------------------------------
 def profile_image_upload_path(instance, filename):
     """
     Guarda la imagen de perfil en media/profiles/<username>/<filename>
     """
     return os.path.join('profiles', instance.username, filename)
 
+
+# -------------------------------------------------------
+# Modelo de usuario personalizado
+# -------------------------------------------------------
 class Usuario(AbstractUser):
-    # Campos adicionales
     profession = models.CharField(max_length=100, blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
     age = models.PositiveIntegerField(blank=True, null=True)
 
-    # Imagen de perfil
     profile_image = models.ImageField(
-        upload_to=profile_image_upload_path, 
-        blank=True, 
-        null=True
+        upload_to=profile_image_upload_path,
+        blank=True,
+        null=True,
+        default='profiles/default.png'
     )
 
     @property
     def profile_image_url(self):
         """
-        Devuelve la URL de la imagen de perfil si existe,
-        si no, devuelve la imagen por defecto en media.
+        Devuelve la URL de la imagen de perfil si existe.
+        Si no, devuelve la imagen por defecto en /media/profiles/default.png.
+        Compatible con producción (Render, Cloudinary, etc.).
         """
-        if self.profile_image:
-            return self.profile_image.url
-        return '/media/profiles/default.png'  # Debes poner esta imagen en media/profiles/default.png
+        try:
+            if self.profile_image and hasattr(self.profile_image, 'url'):
+                return self.profile_image.url
+        except Exception:
+            pass
+        return f"{settings.MEDIA_URL}profiles/default.png"
 
-    # Relaciones de permisos y grupos
     groups = models.ManyToManyField(
         Group,
         related_name="usuario_set",
@@ -49,6 +60,7 @@ class Usuario(AbstractUser):
 
     def __str__(self):
         return self.username
+
 
 # -------------------------------------------------------
 # Roles opcionales
