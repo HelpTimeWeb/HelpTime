@@ -34,7 +34,7 @@ class Usuario(AbstractUser):
         # Fallback
         if settings.DEBUG:
             return f"{settings.MEDIA_URL}profiles/default.png"
-        return "https://res.cloudinary.com/dcirbnch2/image/upload/v0000000000/profiles/default.png"
+        return "https://res.cloudinary.com/dcirbnch2/image/upload/v1761276056/profiles/default.png"
 
     groups = models.ManyToManyField(
         Group,
