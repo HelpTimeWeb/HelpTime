@@ -53,6 +53,14 @@ class Usuario(AbstractUser):
 
     def __str__(self):
         return self.username
+    
+    @property
+    def reputacion(self):
+        valoraciones = Valoracion.objects.filter(servicio__user=self)
+        if not valoraciones.exists():
+            return 0
+        promedio = sum(v.puntuacion for v in valoraciones) / valoraciones.count()
+        return round(promedio, 2)
 
 
 # -------------------------------------------------------
@@ -108,3 +116,17 @@ class Mensaje(models.Model):
 
     def __str__(self):
         return f"{self.sender} -> {self.receiver}: {self.content[:20]}"
+    
+
+class Valoracion(models.Model):
+    servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE, related_name='valoraciones')
+    autor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='valoraciones_realizadas')
+    puntuacion = models.PositiveIntegerField(choices=[(i, f"{i} estrellas") for i in range(1, 6)])
+    comentario = models.TextField(blank=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('servicio', 'autor')  # evita que un usuario valore dos veces el mismo servicio
+
+    def __str__(self):
+        return f"{self.autor.username} → {self.servicio.title}: {self.puntuacion}★"

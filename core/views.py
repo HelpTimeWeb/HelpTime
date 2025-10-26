@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .models import Usuario, Servicio, Mensaje, Rol
-from .forms import RegistroForm, LoginForm, ServicioForm, MensajeForm
+from .models import Usuario, Servicio, Mensaje, Rol, Valoracion
+from .forms import RegistroForm, LoginForm, ServicioForm, MensajeForm, ValoracionForm
 from django.core.paginator import Paginator
 from django.contrib import messages
+
 
 # Home
 def home(request):
@@ -118,3 +119,30 @@ def send_message(request, user_id):
         if content:
             Mensaje.objects.create(sender=request.user, receiver=recipient, content=content)
     return redirect('chat', user_id=user_id)
+
+
+@login_required
+def valorar_servicio(request, servicio_id):
+    servicio = get_object_or_404(Servicio, id=servicio_id)
+
+    if servicio.user == request.user:
+        messages.error(request, "No podés valorar tu propio servicio.")
+        return redirect('profile', user_id=servicio.user.id)
+
+    if Valoracion.objects.filter(servicio=servicio, autor=request.user).exists():
+        messages.error(request, "Ya valoraste este servicio.")
+        return redirect('profile', user_id=servicio.user.id)
+
+    if request.method == 'POST':
+        form = ValoracionForm(request.POST)
+        if form.is_valid():
+            valoracion = form.save(commit=False)
+            valoracion.servicio = servicio
+            valoracion.autor = request.user
+            valoracion.save()
+            messages.success(request, "¡Gracias por tu valoración!")
+            return redirect('profile', user_id=servicio.user.id)
+    else:
+        form = ValoracionForm()
+
+    return render(request, 'valorar_servicio.html', {'form': form, 'servicio': servicio})

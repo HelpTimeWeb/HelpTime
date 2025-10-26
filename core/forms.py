@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import Usuario, Servicio, Mensaje, Rol
+from .models import Usuario, Servicio, Mensaje, Rol, Valoracion
+
 
 # Formulario de registro
 class RegistroForm(UserCreationForm):
@@ -71,3 +72,16 @@ class MensajeForm(forms.ModelForm):
     class Meta:
         model = Mensaje
         fields = ['content']
+
+
+class ValoracionForm(forms.ModelForm):
+    class Meta:
+        model = Valoracion
+        fields = ['puntuacion', 'comentario']
+        labels = {
+            'puntuacion': 'Puntuación',
+            'comentario': 'Comentario (opcional)',
+        }
+        widgets = {
+            'comentario': forms.Textarea(attrs={'rows': 3, 'placeholder': '¿Qué te pareció el servicio?'}),
+        }

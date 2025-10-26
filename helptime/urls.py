@@ -42,6 +42,8 @@ urlpatterns = [
     # Chat
     path('chat/<int:user_id>/', views.chat_view, name='chat'),
     path('chat/<int:user_id>/send/', views.send_message, name='send_message'),
+
+    path('valorar/<int:servicio_id>/', views.valorar_servicio, name='valorar_servicio'),
 ]
 
 # Servir media solo en local

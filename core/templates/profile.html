@@ -38,7 +38,17 @@
                 <p class="card-text">Edad: {{ user.age|default:"No especificada" }}</p>
                 <p class="card-text">Profesión: {{ user.profession|default:"No especificada" }}</p>
                 <p class="card-text">Ubicación: {{ user.location|default:"No especificada" }}</p>
-                <p class="card-text">Reputación: ★★★★☆</p>
+                <p class="card-text">
+                    Reputación:
+                    {% for i in "12345" %}
+                    {% if user.reputacion|floatformat:0 >= forloop.counter %}
+                    ★
+                    {% else %}
+                    ☆
+                    {% endif %}
+                    {% endfor %}
+                    ({{ user.reputacion }})
+                </p>
                 {% if user != request.user %}
                     <a href="{% url 'chat' user.id %}" class="btn btn-success w-100 mt-2">Iniciar Chat</a>
                 {% endif %}
@@ -52,12 +62,14 @@
                 <h5 class="mb-3">Servicios / Experiencia</h5>
                 <ul class="list-group list-group-flush">
                     {% for service in user.services.all %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
                             <div class="d-flex align-items-center">
                                 {% if service.image %}
-                                    <img src="{{ service.image.url }}" alt="{{ service.title }}" class="rounded me-2" style="width:50px; height:50px; object-fit:cover;">
+                                <img src="{{ service.image.url }}" alt="{{ service.title }}" class="rounded me-2"
+                                    style="width:50px; height:50px; object-fit:cover;">
                                 {% else %}
-                                    <img src="https://via.placeholder.com/50" alt="Sin imagen" class="rounded me-2">
+                                <img src="https://via.placeholder.com/50" alt="Sin imagen" class="rounded me-2">
                                 {% endif %}
                                 <div>
                                     <strong>{{ service.title }}</strong>
@@ -65,9 +77,14 @@
                                 </div>
                             </div>
                             <span class="badge bg-success rounded-pill">{{ service.rating }} ★</span>
-                        </li>
-                    {% empty %}
-                        <li class="list-group-item">No hay servicios publicados</li>
+                        </div>
+                    
+                        {% if request.user != user %}
+                        <div class="text-end mt-2">
+                            <a href="{% url 'valorar_servicio' service.id %}" class="btn btn-outline-success btn-sm">Valorar</a>
+                        </div>
+                        {% endif %}
+                    </li>
                     {% endfor %}
                 </ul>
             </div>
