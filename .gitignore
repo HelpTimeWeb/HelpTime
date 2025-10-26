@@ -33,9 +33,6 @@ db.sqlite3
 staticfiles/
 media/
 
-# --- Archivos de migraciones si son temporales (opcional) ---
-# */migrations/
-
 # --- Cachés de herramientas ---
 .cache/
 .pytest_cache/
