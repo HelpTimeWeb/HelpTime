@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .models import Usuario, Servicio, Mensaje, Rol, Valoracion
+from .models import Usuario, Servicio, Mensaje, Valoracion
 from .forms import RegistroForm, LoginForm, ServicioForm, MensajeForm, ValoracionForm
 from django.core.paginator import Paginator
 from django.contrib import messages
+from .forms import EditarPerfilForm
 
 
 # Home
@@ -19,8 +20,6 @@ def register_view(request):
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password1'])
             user.save()
-            if form.cleaned_data.get('roles'):
-                user.roles.set(form.cleaned_data['roles'])
             login(request, user)
             return redirect('home')
     else:
@@ -146,3 +145,26 @@ def valorar_servicio(request, servicio_id):
         form = ValoracionForm()
 
     return render(request, 'valorar_servicio.html', {'form': form, 'servicio': servicio})
+
+@login_required
+def edit_profile_view(request, user_id):
+    user = get_object_or_404(Usuario, id=user_id)
+
+    if request.user != user:
+        messages.error(request, "No podés editar el perfil de otro usuario.")
+        return redirect('profile', user_id=user.id)
+
+    if request.method == 'POST':
+        form = EditarPerfilForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            if 'profile_image-clear' in request.POST:
+                user.profile_image.delete(save=False)
+                user.profile_image = None
+
+            form.save()
+            messages.success(request, "Perfil actualizado correctamente ✅")
+            return redirect('profile', user_id=user.id)
+    else:
+        form = EditarPerfilForm(instance=user)
+
+    return render(request, 'edit_profile.html', {'form': form, 'user': user})

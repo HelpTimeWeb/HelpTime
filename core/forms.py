@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import Usuario, Servicio, Mensaje, Rol, Valoracion
+from .models import Usuario, Servicio, Mensaje, Valoracion
 
 
 # Formulario de registro
@@ -11,18 +11,12 @@ class RegistroForm(UserCreationForm):
     profession = forms.CharField(label="Profesión", required=False, max_length=100)
     location = forms.CharField(label="Ubicación", required=False, max_length=100)
     profile_image = forms.ImageField(label="Imagen de perfil", required=False)
-    roles = forms.ModelMultipleChoiceField(
-        queryset=Rol.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        label="Roles",
-        required=False
-    )
 
     class Meta:
         model = Usuario
         fields = [
             'username', 'email', 'password1', 'password2',
-            'age', 'profession', 'location', 'profile_image', 'roles'
+            'age', 'profession', 'location', 'profile_image'
         ]
         labels = {
             'password1': 'Contraseña',
@@ -84,4 +78,17 @@ class ValoracionForm(forms.ModelForm):
         }
         widgets = {
             'comentario': forms.Textarea(attrs={'rows': 3, 'placeholder': '¿Qué te pareció el servicio?'}),
+        }
+
+class EditarPerfilForm(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        fields = ['username', 'email', 'age', 'profession', 'location', 'profile_image']
+        labels = {
+            'username': 'Nombre de usuario',
+            'email': 'Correo electrónico',
+            'age': 'Edad',
+            'profession': 'Profesión',
+            'location': 'Ubicación',
+            'profile_image': 'Imagen de perfil',
         }

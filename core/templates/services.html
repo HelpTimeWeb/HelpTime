@@ -18,8 +18,11 @@
             <img src="{% static 'img/logo.png' %}" alt="Logo" width="30" height="30" class="me-2">
             HelpTime
         </a>
-        <div class="d-flex">
-            <a href="{% url 'create_service' %}" class="btn btn-outline-success me-2">Publicar Servicio</a>
+        <div class="d-flex align-items-center gap-3">
+            <a href="{% url 'home' %}#faqAccordion" class="text-success text-decoration-none small fw-semibold">
+                <i class="bi bi-question-circle me-1"></i> Preguntas frecuentes
+            </a>
+            <a href="{% url 'create_service' %}" class="btn btn-outline-success">Publicar Servicio</a>
             <a href="{% url 'logout' %}" class="btn btn-success">Cerrar Sesión</a>
         </div>
     </div>

@@ -64,16 +64,6 @@ class Usuario(AbstractUser):
 
 
 # -------------------------------------------------------
-# Roles opcionales
-# -------------------------------------------------------
-class Rol(models.Model):
-    nombre = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.nombre
-
-
-# -------------------------------------------------------
 # Servicio publicado por un usuario
 # -------------------------------------------------------
 class Servicio(models.Model):
@@ -100,6 +90,13 @@ class Servicio(models.Model):
 
     def __str__(self):
         return f"{self.title} - {self.user.username}"
+    
+    @property
+    def rating(self):
+        valoraciones = self.valoraciones.all()
+        if valoraciones.exists():
+            return round(sum(v.puntuacion for v in valoraciones) / valoraciones.count(), 1)
+        return 0
 
 
 # -------------------------------------------------------
@@ -123,7 +120,8 @@ class Valoracion(models.Model):
     autor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='valoraciones_realizadas')
     puntuacion = models.PositiveIntegerField(choices=[(i, f"{i} estrellas") for i in range(1, 6)])
     comentario = models.TextField(blank=True)
-    fecha = models.DateTimeField(auto_now_add=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('servicio', 'autor')  # evita que un usuario valore dos veces el mismo servicio
