@@ -61,15 +61,15 @@
 <section class="py-5 text-center text-white" style="background: linear-gradient(135deg, #28a745, #218838);">
   <div class="container">
     <h1 class="display-4 fw-bold mb-3" style="font-family: 'Segoe UI', sans-serif;">Conectá con tu comunidad</h1>
-    <p class="lead mb-4" style="font-size: 1.25rem;">En HelpTime podés ofrecer ayuda, recibirla y ganar reputación haciendo el bien. ¡Tu tiempo vale!</p>
+    <p class="lead mb-4" style="font-size: 1.25rem;">Ofrecé ayuda, recibila y sumá reputación. En HelpTime es gratis, rápido y solidario. ¡Tu tiempo vale, y tu impacto también!</p>
 
     <div class="d-flex justify-content-center gap-3 flex-wrap">
       {% if user.is_authenticated %}
         <a href="{% url 'create_service' %}" class="btn btn-light btn-lg px-4">
-          <i class="bi bi-plus-circle"></i> Ofrecer ayuda
+          <i class="bi bi-plus-circle"></i> Ofrecer un servicio
         </a>
         <a href="{% url 'services' %}" class="btn btn-outline-light btn-lg px-4">
-          <i class="bi bi-search"></i> Buscar ayuda
+          <i class="bi bi-search"></i> Tomar un servicio
         </a>
       {% else %}
         <a href="{% url 'register' %}" class="btn btn-light btn-lg px-4">
