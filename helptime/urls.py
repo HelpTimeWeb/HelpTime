@@ -45,6 +45,10 @@ urlpatterns = [
 
     path('valorar/<int:servicio_id>/', views.valorar_servicio, name='valorar_servicio'),
     path('profile/<int:user_id>/edit/', views.edit_profile_view, name='edit_profile'),
+
+    #Notificaciones
+    path('notificaciones/', views.notificaciones_view, name='notificaciones'),
+    path('notificaciones/marcar/<int:notif_id>/', views.marcar_leida_view, name='marcar_notificacion'),
 ]
 
 # Servir media solo en local

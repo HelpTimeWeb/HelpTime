@@ -128,3 +128,17 @@ class Valoracion(models.Model):
 
     def __str__(self):
         return f"{self.autor.username} → {self.servicio.title}: {self.puntuacion}★"
+    
+class Notificacion(models.Model):
+    receptor = models.ForeignKey(
+        Usuario, on_delete=models.CASCADE, related_name="notificaciones"
+    )
+    emisor = models.ForeignKey(
+        Usuario, on_delete=models.CASCADE, related_name="notificaciones_enviadas"
+    )
+    mensaje = models.CharField(max_length=255)
+    leida = models.BooleanField(default=False)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.emisor} ➔ {self.receptor}: {self.mensaje[:20]}"

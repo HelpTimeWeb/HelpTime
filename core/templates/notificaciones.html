@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Notificaciones</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+
+<div class="container my-5">
+  <h2 class="mb-4 text-success d-flex align-items-center">
+    <i class="bi bi-bell-fill me-2 fs-3"></i> Notificaciones
+  </h2>
+
+  {% if notifs %}
+    <div class="list-group shadow-sm">
+      {% for notif in notifs %}
+        <div class="list-group-item py-3 {% if not notif.leida %}bg-light border-start border-4 border-success{% endif %}">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="me-3">
+              <p class="mb-1 {% if not notif.leida %}fw-bold{% endif %}">
+                {{ notif.mensaje }}
+              </p>
+              <small class="text-muted">
+                <i class="bi bi-clock me-1"></i>{{ notif.fecha|date:"d/m/Y H:i" }}
+              </small>
+            </div>
+            {% if not notif.leida %}
+              <a href="{% url 'marcar_notificacion' notif.id %}" class="btn btn-sm btn-outline-success">
+                <i class="bi bi-check-circle me-1"></i> Marcar leída
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info d-flex align-items-center" role="alert">
+      <i class="bi bi-info-circle me-2 fs-5"></i>
+      No tenés notificaciones.
+    </div>
+  {% endif %}
+
+  <a href="{% url 'home' %}" class="btn btn-outline-success mt-4">
+    <i class="bi bi-arrow-left-circle me-1"></i> Volver al inicio
+  </a>
+</div>
+
+</body>
+</html>

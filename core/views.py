@@ -6,11 +6,15 @@ from .forms import RegistroForm, LoginForm, ServicioForm, MensajeForm, Valoracio
 from django.core.paginator import Paginator
 from django.contrib import messages
 from .forms import EditarPerfilForm
+from core.models import Notificacion
 
 
 # Home
 def home(request):
-    return render(request, 'home.html')
+    notifs = []
+    if request.user.is_authenticated:
+        notifs = Notificacion.objects.filter(receptor=request.user, leida=False)
+    return render(request, 'home.html', {'notifs': notifs})
 
 # Registro
 def register_view(request):
@@ -116,8 +120,30 @@ def send_message(request, user_id):
         content = request.POST.get("message", "")
         recipient = get_object_or_404(Usuario, id=user_id)
         if content:
+            # Guardar mensaje
             Mensaje.objects.create(sender=request.user, receiver=recipient, content=content)
+            # Crear notificación
+            Notificacion.objects.create(
+                receptor=recipient,
+                emisor=request.user,
+                mensaje=f"Te envió un mensaje: {content[:50]}"
+            )
     return redirect('chat', user_id=user_id)
+
+@login_required
+def notificaciones_view(request):
+    notifs = Notificacion.objects.filter(receptor=request.user).order_by('-fecha')
+    return render(request, 'notificaciones.html', {'notifs': notifs})
+
+@login_required
+def marcar_leida_view(request, notif_id):
+    """
+    Marca una notificación como leída y redirige a la misma página de notificaciones.
+    """
+    notif = get_object_or_404(Notificacion, id=notif_id, receptor=request.user)
+    notif.leida = True
+    notif.save()
+    return redirect('notificaciones')
 
 
 @login_required
